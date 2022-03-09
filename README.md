@@ -7,3 +7,9 @@ The `enableRawMode` and `disableRawMode` functions from `pasted-code.h` are from
 ## How to use it
 
 You can move the snake using either the arrow keys, WASD or the vim keys.
+
+The default field size is 16x8 but you change it using command line arguments like this:
+
+`./snake 7x23`
+
+Where 7 is the width and 23 the height of the field. Please keep in mind that the field must be 5x5 big at minimum and 41x41 at maximum.

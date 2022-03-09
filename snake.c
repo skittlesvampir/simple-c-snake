@@ -6,6 +6,7 @@
 #include <stdlib.h> // atexit, rand
 #include <sys/ioctl.h> // FIONREAD
 #include <time.h> // for RNG initialization
+#include <string.h> // strtok
 #include "pasted-code.h"
 
 void textcolor (int bg) {
@@ -117,10 +118,10 @@ void pauseGame (int field_size_y) {
     printf("\033[2K\033[1A\033[2K"); // erease two the two lines that have been printed before
 }
 
-bool game() {
-    int field_size_x = 16;
-    int field_size_y = 8;
+bool game(int field_size_x, int field_size_y) {
     int delay = 2000;
+    field_size_x += 2;
+    field_size_y += 2;
     drawField(field_size_x, field_size_y);
     field_size_x -= 2;
     field_size_y -= 2;
@@ -135,7 +136,7 @@ bool game() {
     int snake_pixels[field_size_x*field_size_y][2];
     char c;
     int length = 4;
-    int head_pos[] = {length,3};
+    int head_pos[] = {length,field_size_y/2};
     setHead(head_pos[0],head_pos[1]);
     int old_direction;
     int direction = 2;
@@ -273,9 +274,22 @@ bool game() {
     }
 }
 
-int main() {
+int main(int argc, char *argv[]) {
     enableRawMode();
-    while (game());
+    int field_size_x = 16;
+    int field_size_y = 8;
+    if (argc >= 2) {
+        sscanf(argv[1], "%dx%d", &field_size_x, &field_size_y);
+        if (field_size_x < 5 || field_size_y < 5) {
+            printf("Field size must be at least 5x5!\n");
+            return 1;
+        }
+        if (field_size_x > 41 || field_size_y > 41) {
+            printf("Field size mustn't be bigger than 41x41!\n");
+            return 1;
+        }
+    }
+    while (game(field_size_x, field_size_y));
     printf("\033[H"); // Move cursor to home positon (0,0)
     printf("\033[2J"); // Erease entire screen
     printf("\033[?25h"); // Show cursor
